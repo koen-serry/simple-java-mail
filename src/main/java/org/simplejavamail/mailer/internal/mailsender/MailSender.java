@@ -5,6 +5,7 @@ import org.simplejavamail.converter.internal.mimemessage.MimeMessageProducerHelp
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.Recipient;
 import org.simplejavamail.mailer.AsyncResponse;
+import org.simplejavamail.mailer.IDKIMSigner;
 import org.simplejavamail.mailer.MailerGenericBuilder;
 import org.simplejavamail.mailer.config.TransportStrategy;
 import org.simplejavamail.mailer.internal.socks.AuthenticatingSocks5Bridge;
@@ -62,6 +63,12 @@ public class MailSender {
 	private final TransportStrategy transportStrategy;
 	
 	/**
+	 * If this property is non-null then the message is signed
+	 */
+	@Nullable
+	private final IDKIMSigner dkimSigner;
+	
+	/**
 	 * @see OperationalConfig
 	 */
 	private final OperationalConfig operationalConfig;
@@ -93,9 +100,18 @@ public class MailSender {
 					  @Nonnull final OperationalConfig operationalConfig,
 					  @Nonnull final ProxyConfig proxyConfig,
 					  @Nullable final TransportStrategy transportStrategy) {
+		this(session,operationalConfig,proxyConfig,transportStrategy,null);
+	}
+	
+	public MailSender(@Nonnull final Session session,
+					  @Nonnull final OperationalConfig operationalConfig,
+					  @Nonnull final ProxyConfig proxyConfig,
+					  @Nullable final TransportStrategy transportStrategy,
+					  @Nullable final IDKIMSigner dkimSigner) {
 		this.session = session;
 		this.operationalConfig = operationalConfig;
 		this.transportStrategy = transportStrategy;
+		this.dkimSigner = dkimSigner;
 		this.proxyServer = configureSessionWithProxy(proxyConfig, session, transportStrategy);
 		init(operationalConfig);
 	}
@@ -250,7 +266,9 @@ public class MailSender {
 				// fill and send wrapped mime message parts
 				final MimeMessage message = MimeMessageProducerHelper.produceMimeMessage(
 						checkNonEmptyArgument(email, "email"),
-						checkNonEmptyArgument(session, "session"));
+						checkNonEmptyArgument(session, "session"),
+                        dkimSigner
+                );
 				
 				configureBounceToAddress(session, email);
 				

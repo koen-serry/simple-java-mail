@@ -98,6 +98,9 @@ public class Mailer {
 	private final TransportStrategy transportStrategy;
 	
 	@Nullable
+	private final IDKIMSigner dkimSigner;
+	
+	@Nullable
 	private final ServerConfig serverConfig;
 	
 	@Nonnull
@@ -106,6 +109,7 @@ public class Mailer {
 	Mailer(@Nonnull final MailerFromSessionBuilder fromSessionBuilder) {
 		this.serverConfig = null;
 		this.transportStrategy = null;
+		this.dkimSigner = null;
 		this.emailAddressCriteria = fromSessionBuilder.getEmailAddressCriteria();
 		this.proxyConfig = fromSessionBuilder.buildProxyConfig();
 		final Session session = fromSessionBuilder.getSession();
@@ -116,6 +120,7 @@ public class Mailer {
 	Mailer(@Nonnull final MailerRegularBuilder regularBuilder) {
 		this.serverConfig = regularBuilder.buildServerConfig();
 		this.transportStrategy = regularBuilder.getTransportStrategy();
+		this.dkimSigner = regularBuilder.getDKIMSigner();
 		this.emailAddressCriteria = regularBuilder.getEmailAddressCriteria();
 		this.proxyConfig = regularBuilder.buildProxyConfig();
 		final Session session = createMailSession(serverConfig, transportStrategy);
@@ -124,7 +129,7 @@ public class Mailer {
 	
 	private MailSender initFromGenericBuilder(@Nullable TransportStrategy transportStrategy, @Nonnull ProxyConfig proxyConfig, @Nonnull Session session, @Nonnull final MailerGenericBuilder<?> genericBuiler) {
 		OperationalConfig operationalConfig = genericBuiler.buildOperationalConfig();
-		return new MailSender(session, operationalConfig, proxyConfig, transportStrategy);
+		return new MailSender(session, operationalConfig, proxyConfig, transportStrategy, dkimSigner);
 	}
 	
 	/**

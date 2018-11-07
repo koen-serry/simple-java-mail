@@ -6,6 +6,7 @@ import org.simplejavamail.email.AttachmentResource;
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.Recipient;
 import org.simplejavamail.internal.util.MiscUtil;
+import org.simplejavamail.mailer.IDKIMSigner;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;

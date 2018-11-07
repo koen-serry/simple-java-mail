@@ -1,8 +1,10 @@
 package org.simplejavamail.converter.internal.mimemessage;
 
 import org.simplejavamail.email.Email;
+import org.simplejavamail.mailer.IDKIMSigner;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -34,10 +36,14 @@ public final class MimeMessageProducerHelper {
 	private MimeMessageProducerHelper() {
 	}
 	
-	public static MimeMessage produceMimeMessage(@Nonnull Email email, @Nonnull Session session) throws UnsupportedEncodingException, MessagingException {
+	public static MimeMessage produceMimeMessage(@Nonnull Email email, @Nonnull Session session, @Nullable IDKIMSigner dkimSigner) throws UnsupportedEncodingException, MessagingException {
 		for (MimeMessageProducer mimeMessageProducer : mimeMessageProducers) {
 			if (mimeMessageProducer.compatibleWithEmail(email)) {
-				return mimeMessageProducer.populateMimeMessage(email, session);
+				MimeMessage mimeMessage = mimeMessageProducer.populateMimeMessage(email, session);
+				if(dkimSigner != null){
+					return dkimSigner.signMessageWithDKIM(mimeMessage,email);
+				}
+				return mimeMessage;
 			}
 		}
 		throw new AssertionError("no compatible MimeMessageProducer found for email");

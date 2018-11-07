@@ -55,11 +55,6 @@ abstract class MimeMessageProducer {
 		
 		MimeMessageHelper.setHeaders(email, message);
 		message.setSentDate(new Date());
-
-		if (!valueNullOrEmpty(email.getDkimSigningDomain())) {
-			return signMessageWithDKIM(message, email);
-		}
-		
 		return message;
 	}
 	

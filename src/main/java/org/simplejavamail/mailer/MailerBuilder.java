@@ -1,10 +1,10 @@
 package org.simplejavamail.mailer;
 
+import com.sun.istack.internal.Nullable;
 import org.simplejavamail.mailer.config.TransportStrategy;
 import org.simplejavamail.util.ConfigLoader;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.mail.Session;
 
 import static org.simplejavamail.util.ConfigLoader.Property.SMTP_HOST;
@@ -128,6 +128,7 @@ public class MailerBuilder {
 		private String username;
 		private String password;
 		private TransportStrategy transportStrategy;
+		private IDKIMSigner dkimSigner;
 		
 		/**
 		 * Sets defaults configured for SMTP host, SMTP port, SMTP username, SMTP password and transport strategy.
@@ -158,6 +159,14 @@ public class MailerBuilder {
 		 */
 		public MailerRegularBuilder withTransportStrategy(@Nonnull final TransportStrategy transportStrategy) {
 			this.transportStrategy = transportStrategy;
+			return this;
+		}
+		
+		/**
+		 * Sets the optional dkim signer of this mailer. Will default to none is left empty.
+		 */
+		public MailerRegularBuilder withDKIMSigner(@Nonnull final IDKIMSigner dkimSigner) {
+			this.dkimSigner = dkimSigner;
 			return this;
 		}
 		
@@ -255,6 +264,10 @@ public class MailerBuilder {
 		
 		public TransportStrategy getTransportStrategy() {
 			return transportStrategy;
+		}
+
+		public IDKIMSigner getDKIMSigner() {
+			return dkimSigner;
 		}
 	}
 }

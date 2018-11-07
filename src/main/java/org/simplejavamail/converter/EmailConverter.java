@@ -8,9 +8,11 @@ import org.simplejavamail.email.Email;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.email.EmailPopulatingBuilder;
 import org.simplejavamail.internal.util.MiscUtil;
+import org.simplejavamail.mailer.IDKIMSigner;
 
 import javax.activation.DataSource;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
@@ -188,11 +190,11 @@ public final class EmailConverter {
 	}
 
 	/**
-	 * Refer to {@link MimeMessageProducerHelper#produceMimeMessage(Email, Session)}
+	 * Refer to {@link MimeMessageProducerHelper#produceMimeMessage(Email, Session, IDKIMSigner)}
 	 */
 	public static MimeMessage emailToMimeMessage(@Nonnull final Email email, @Nonnull final Session session) {
 		try {
-			return MimeMessageProducerHelper.produceMimeMessage(checkNonEmptyArgument(email, "email"), checkNonEmptyArgument(session, "session"));
+			return MimeMessageProducerHelper.produceMimeMessage(checkNonEmptyArgument(email, "email"), checkNonEmptyArgument(session, "session"), null);
 		} catch (UnsupportedEncodingException | MessagingException e) {
 			// this should never happen, so we don't acknowledge this exception (and simply bubble up)
 			throw new AssertionError(e.getMessage(), e);
